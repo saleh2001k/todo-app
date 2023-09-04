@@ -1,0 +1,99 @@
+.todo-body {
+    width: 90vw;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 35px;
+
+    .todo-header {
+        background-color: rgb(52, 58, 64);
+        color: rgb(255, 255, 255);
+        font-size: 20px;
+        padding-left: 35px;
+        border-radius: 0.3rem;
+    }
+
+
+
+    .todo-sections {
+        height: 80vh;
+        display: flex;
+
+        .todo-form {
+            width: 20vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 4vh;
+            font-size: 22px;
+            margin: 0 30px;
+            padding: 6vh 3vw;
+
+            border: 1px solid rgb(222, 222, 222);
+            border-radius: 10px;
+
+            box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+
+            input {
+                height: 44px;
+                width: 20vw;
+                border: 1px solid rgb(222, 222, 222);
+                border-radius: 10px;
+                margin: 10px 0;
+                padding: 0 10px;
+            }
+
+            input::placeholder {
+                padding: 10px;
+            }
+
+            h2 {
+                font-weight: 800;
+                font-size: 30px;
+            }
+        }
+    }
+
+    .todo-list {
+        display: flex;
+        flex-direction: column;
+
+        .todo-empty {
+            overflow: auto;
+            scroll-behavior: smooth;
+            height: auto;
+            min-height: 73vh;
+            width: 57vw;
+
+            p {
+                display: grid;
+                place-items: center;
+                height: 100%;
+                font-size: 26px;
+            }
+        }
+
+        .todo-empty::-webkit-scrollbar {
+            width: 10px;
+
+        }
+
+        /* Track */
+        .todo-empty::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        /* Handle */
+        .todo-empty::-webkit-scrollbar-thumb {
+            background: #1c7ed6;
+        }
+
+        /* Handle on hover */
+        .todo-empty::-webkit-scrollbar-thumb:hover {
+            background: #64bfff;
+        }
+    }
+
+
+
+}
