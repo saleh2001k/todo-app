@@ -1,65 +1,57 @@
-import { useContext } from "react";
+import React from "react";
 import "./List.scss";
-import { SettingsContext } from "../../Context/Settings/index";
+import { useSettings } from "../../Context/Settings/index";
 import { Paper, Text, Group, CloseButton, Checkbox } from "@mantine/core";
+
 function List({ items, currentPage, deleteItem, toggleComplete }) {
-  const settings = useContext(SettingsContext);
+  const { settings } = useSettings();
 
-  settings.hideCompleted
-    ? (items = items.filter((item) => !item.complete))
-    : "";
+  const filteredItems = settings.hideCompleted
+    ? items.filter((item) => !item.complete)
+    : items;
 
-  items = items.sort((a, b) => b[settings.sortWord] - a[settings.sortWord]);
-
-  const itemsToDisplay = items.slice(
-    (currentPage - 1) * settings.displayItems,
-    currentPage * settings.displayItems
+  const sortedItems = filteredItems.sort(
+    (a, b) => b[settings.sortField] - a[settings.sortField]
   );
 
+  const startIndex = (currentPage - 1) * settings.displayItems;
+  const endIndex = startIndex + settings.displayItems;
+  const itemsToDisplay = sortedItems.slice(startIndex, endIndex);
+
   return (
-    <>
-      <div>
-        {itemsToDisplay.map((item) => (
-          <>
-            <section className="list-item">
-              <Paper withBorder p="lg" radius="md" shadow="md">
-                <Group position="apart" mb="xs">
-                  <Text fz="lg" fw={500}>
-                    <span className="pendindg">Pending</span>
-                    {item?.assignee?.toUpperCase()}
-                  </Text>
-                  <CloseButton
-                    mr={-9}
-                    mt={-9}
-                    onClick={() => deleteItem(item.id)}
-                  />
-                </Group>
-                <Text c="dimmed" fz="s">
-                  {item.text}
-                </Text>
-
-                <Group position="apart" mt="lg">
-                  <Text color="blue" size="xs">
-                    Difficulty : {item.difficulty}
-                  </Text>
-
-                  {/* <Checkbox
-                    key={item.id}
-                    label="completed"
-                    color="teal"
-                    onChange={() =>
-                      setTimeout(() => {
-                        toggleComplete(item.id);
-                      }, 200)
-                    }
-                  /> */}
-                </Group>
-              </Paper>
-            </section>
-          </>
-        ))}
-      </div>
-    </>
+    <div>
+      {itemsToDisplay.map((item) => (
+        <section className="list-item" key={item.id}>
+          <Paper withBorder p="lg" radius="md" shadow="md">
+            <Group position="apart" mb="xs">
+              <Text fz="lg" fw={500}>
+                <span className="pending">Pending</span>
+                {item?.assignee?.toUpperCase()}
+              </Text>
+              <CloseButton
+                mr={-9}
+                mt={-9}
+                onClick={() => deleteItem(item.id)}
+              />
+            </Group>
+            <Text c="dimmed" fz="s">
+              {item.text}
+            </Text>
+            <Group position="apart" mt="lg">
+              <Text color="blue" size="xs">
+                Difficulty: {item.difficulty}
+              </Text>
+              {/* <Checkbox
+                label="completed"
+                color="teal"
+                checked={item.complete}
+                onChange={() => toggleComplete(item.id)}
+              /> */}
+            </Group>
+          </Paper>
+        </section>
+      ))}
+    </div>
   );
 }
 

@@ -1,20 +1,35 @@
-import { useEffect, useState, useContext } from "react";
-import useForm from "../../hooks/form.jsx";
+import React, { useContext, useState, useEffect } from "react";
+import useForm from "../../hooks/form";
 import "./Todo.scss";
 import { v4 as uuid } from "uuid";
-import List from "../List/index.jsx";
+import List from "../List/index";
 import { Button, Pagination } from "@mantine/core";
-
-import { SettingsContext } from "../../Context/Settings/index.jsx";
+import { useSettings } from "../../Context/Settings/index";
 
 const ToDo = () => {
-  const settings = useContext(SettingsContext);
+  const { settings, updateSettings } = useSettings();
+
   const [currentPage, setCurrentPage] = useState(1);
 
   const [defaultValues] = useState({
     difficulty: 4,
   });
+
+
   const [list, setList] = useState([]);
+
+  useEffect(() => {
+    const saveditems = JSON.parse(localStorage.getItem('items'));
+    if (saveditems) {
+      setList(saveditems.slice());
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('items', JSON.stringify(list));
+  }, [list]);
+
+
   const [incomplete, setIncomplete] = useState([]);
   const { handleChange, handleSubmit } = useForm(addItem, defaultValues);
 
@@ -51,16 +66,15 @@ const ToDo = () => {
     console.log(incompleteCount)
 
   }, [list]);
-
   return (
     <>
-      <section className='todo-body'>
-        <header className='todo-header'>
+      <section className="todo-body">
+        <header className="todo-header">
           <h1>To Do List: {incomplete} items pending</h1>
         </header>
 
-        <section className='todo-sections'>
-          <form onSubmit={handleSubmit} className='todo-form'>
+        <section className="todo-sections">
+          <form onSubmit={handleSubmit} className="todo-form">
             <h2>Add To Do Item</h2>
 
             <label>
@@ -68,9 +82,9 @@ const ToDo = () => {
               <br />
               <input
                 onChange={handleChange}
-                name='text'
-                type='text'
-                placeholder='Item Details'
+                name="text"
+                type="text"
+                placeholder="Item Details"
               />
             </label>
 
@@ -79,9 +93,9 @@ const ToDo = () => {
               <br />
               <input
                 onChange={handleChange}
-                name='assignee'
-                type='text'
-                placeholder='Assignee Name'
+                name="assignee"
+                type="text"
+                placeholder="Assignee Name"
               />
             </label>
 
@@ -91,21 +105,21 @@ const ToDo = () => {
               <input
                 onChange={handleChange}
                 defaultValue={defaultValues.difficulty}
-                type='range'
+                type="range"
                 min={1}
                 max={5}
-                name='difficulty'
+                name="difficulty"
               />
             </label>
 
             <label>
-              <Button type='submit'>Add Item</Button>
+              <Button type="submit">Add Item</Button>
             </label>
           </form>
 
-          <section className='todo-list'>
+          <section className="todo-list">
             {list.length ? (
-              <div className='todo-empty'>
+              <div className="todo-empty">
                 <List
                   items={list}
                   currentPage={currentPage}
@@ -114,7 +128,7 @@ const ToDo = () => {
                 />
               </div>
             ) : (
-              <div className='todo-empty'>
+              <div className="todo-empty">
                 <p>Empty To Do List</p>
               </div>
             )}
