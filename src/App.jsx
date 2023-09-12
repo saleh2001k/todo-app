@@ -5,11 +5,13 @@ import Settings from "./Components/Settings";
 import { SettingsProvider } from "./Context/Settings/index.jsx";
 import Header from "./Components/Header";
 import Footer from "./Components/Footer";
+import LoginProvider from './Context/AuthContext/LoginContext';
 
 export default class App extends React.Component {
   render() {
     return (
       <SettingsProvider>
+        <LoginProvider>
         <BrowserRouter>
           <Header />
           <Routes>
@@ -18,6 +20,7 @@ export default class App extends React.Component {
           </Routes>
           <Footer />
         </BrowserRouter>
+        </LoginProvider>
       </SettingsProvider>
     );
   }
