@@ -5,6 +5,8 @@ import { v4 as uuid } from "uuid";
 import List from "../List/index";
 import { Button, Pagination } from "@mantine/core";
 import { useSettings } from "../../Context/Settings/index";
+import LoginForm from '../LoginForm/LoginForm';
+import Auth from '../auth/Auth';
 
 const ToDo = () => {
   const { settings, updateSettings } = useSettings();
@@ -69,76 +71,84 @@ const ToDo = () => {
   return (
     <>
       <section className="todo-body">
-        <header className="todo-header">
-          <h1>To Do List: {incomplete} items pending</h1>
-        </header>
+        <LoginForm />
+
+        <Auth capability="read">
+          <header className="todo-header">
+            <h1>To Do List: {incomplete} items pending</h1>
+          </header>
+        </Auth>
 
         <section className="todo-sections">
-          <form onSubmit={handleSubmit} className="todo-form">
-            <h2>Add To Do Item</h2>
+          <Auth capability="create">
+            <form onSubmit={handleSubmit} className="todo-form">
+              <h2>Add To Do Item</h2>
 
-            <label>
-              <span>To Do Item</span>
-              <br />
-              <input
-                onChange={handleChange}
-                name="text"
-                type="text"
-                placeholder="Item Details"
-              />
-            </label>
+              <label>
+                <span>To Do Item</span>
+                <br />
+                <input
+                  onChange={handleChange}
+                  name="text"
+                  type="text"
+                  placeholder="Item Details"
+                />
+              </label>
 
-            <label>
-              <span>Assigned To</span>
-              <br />
-              <input
-                onChange={handleChange}
-                name="assignee"
-                type="text"
-                placeholder="Assignee Name"
-              />
-            </label>
+              <label>
+                <span>Assigned To</span>
+                <br />
+                <input
+                  onChange={handleChange}
+                  name="assignee"
+                  type="text"
+                  placeholder="Assignee Name"
+                />
+              </label>
 
-            <label>
-              <span>Difficulty</span>
-              <br />
-              <input
-                onChange={handleChange}
-                defaultValue={defaultValues.difficulty}
-                type="range"
-                min={1}
-                max={5}
-                name="difficulty"
-              />
-            </label>
+              <label>
+                <span>Difficulty</span>
+                <br />
+                <input
+                  onChange={handleChange}
+                  defaultValue={defaultValues.difficulty}
+                  type="range"
+                  min={1}
+                  max={5}
+                  name="difficulty"
+                />
+              </label>
 
-            <label>
-              <Button type="submit">Add Item</Button>
-            </label>
-          </form>
+              <label>
+                <Button type="submit">Add Item</Button>
+              </label>
+            </form>
+          </Auth>
 
           <section className="todo-list">
-            {list.length ? (
-              <div className="todo-empty">
-                <List
-                  items={list}
-                  currentPage={currentPage}
-                  deleteItem={deleteItem}
-                  toggleComplete={toggleComplete}
-                />
-              </div>
-            ) : (
-              <div className="todo-empty">
-                <p>Empty To Do List</p>
-              </div>
-            )}
-            <Pagination
-              total={
-                list.length ? Math.ceil(list.length / settings.displayItems) : 1
-              }
-              value={currentPage}
-              onChange={handlePageChange}
-            />
+            <Auth capability="read">
+              {list.length ? (
+                <div className="todo-empty">
+                  <List
+                    items={list}
+                    currentPage={currentPage}
+                    deleteItem={deleteItem}
+                    toggleComplete={toggleComplete}
+                  />
+                </div>
+              ) : (
+                <div className="todo-empty">
+                  <p>Empty To Do List</p>
+                </div>
+              )}
+              <Pagination
+                total={
+                  list.length ? Math.ceil(list.length / settings.displayItems) : 1
+                }
+                value={currentPage}
+                onChange={handlePageChange}
+              />
+            </Auth>
           </section>
         </section>
       </section>

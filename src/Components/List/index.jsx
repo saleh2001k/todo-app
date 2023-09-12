@@ -2,6 +2,8 @@ import React from "react";
 import "./List.scss";
 import { useSettings } from "../../Context/Settings/index";
 import { Paper, Text, Group, CloseButton, Checkbox } from "@mantine/core";
+import Auth from '../auth/Auth';
+
 
 function List({ items, currentPage, deleteItem, toggleComplete }) {
   const { settings } = useSettings();
@@ -28,11 +30,13 @@ function List({ items, currentPage, deleteItem, toggleComplete }) {
                 <span className="pending">Pending</span>
                 {item?.assignee?.toUpperCase()}
               </Text>
-              <CloseButton
-                mr={-9}
-                mt={-9}
-                onClick={() => deleteItem(item.id)}
-              />
+              <Auth capability="delete">
+                <CloseButton
+                  mr={-9}
+                  mt={-9}
+                  onClick={() => deleteItem(item.id)}
+                />
+              </Auth>
             </Group>
             <Text c="dimmed" fz="s">
               {item.text}
@@ -41,12 +45,12 @@ function List({ items, currentPage, deleteItem, toggleComplete }) {
               <Text color="blue" size="xs">
                 Difficulty: {item.difficulty}
               </Text>
-              {/* <Checkbox
+              <Checkbox
                 label="completed"
                 color="teal"
                 checked={item.complete}
                 onChange={() => toggleComplete(item.id)}
-              /> */}
+              />
             </Group>
           </Paper>
         </section>
