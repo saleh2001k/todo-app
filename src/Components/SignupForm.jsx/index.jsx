@@ -17,6 +17,7 @@ export default function SignUp() {
                 username: usernameS,
                 password: passwordS,
                 role: role
+                
             })
             console.log(res);
             alert(`You have Signed up Successfully ${usernameS}`)
