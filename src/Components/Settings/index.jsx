@@ -1,57 +1,56 @@
 import React, { useContext } from 'react'
 import { SettingContext } from '../../Context/Settings/index'
-import { Card, Grid, NumberInput, Switch, Text, TextInput } from '@mantine/core'
 import './Settings.scss'
 
-
-
 export default function SettingPage() {
-
   const { settings, dispatch } = useContext(SettingContext)
-  return (
-    <Grid style={{ width: '80%', margin: 'auto', minHeight: '80vh' }}>
-      <Grid.Col xs={12} sm={8}>
-        <Card withBorder p="xs">
-          <Text >Change Settings</Text>
 
-          <Switch
-            onChange={(e) => dispatch({ type: 'changeShow', payload: e.currentTarget.checked })}
+  return (
+    <div className="settings-container">
+      <div className="settings-card">
+        <h2 className="settings-title">Application Settings</h2>
+
+        <label className="settings-label">
+          Show Completed ToDos
+          <input
+            type="checkbox"
             checked={settings.showDone}
-            label="Show Completed ToDos"
-            mb="sm"
+            onChange={(e) => dispatch({ type: 'changeShow', payload: e.currentTarget.checked })}
             data-testid="show-completed-switch"
           />
+        </label>
 
-          <NumberInput
-            mb="sm"
-            onChange={(value) => dispatch({ type: 'changeTasksNum', payload: value })}
-            placeholder={settings.taskPerPage}
-            label="Items Per page"
+        <div className="settings-input">
+          <label htmlFor="itemsPerPage">Items Per page</label>
+          <input
+            type="number"
+            id="itemsPerPage"
+            value={settings.taskPerPage}
+            onChange={(e) => dispatch({ type: 'changeTasksNum', payload: e.target.value })}
+            placeholder="Items Per page"
             data-testid="items-per-page-input"
           />
+        </div>
 
-          <TextInput
-            mb="sm"
+        <div className="settings-input">
+          <label htmlFor="sortKeyword">Sort Keyword</label>
+          <input
+            type="text"
+            id="sortKeyword"
+            value={settings.sortBy}
             onChange={(e) => dispatch({ type: 'changeSort', payload: e.target.value })}
-            placeholder={settings.sortBy}
-            label="Sort Keyword"
+            placeholder="Sort Keyword"
             data-testid="sort-keyword-input"
           />
+        </div>
+      </div>
 
-        </Card>
-      </Grid.Col>
-      <Grid.Col xs={12} sm={4}>
-
-        <Card withBorder p="xs">
-          <Card.Section>
-            <Text m="xl" >Updated Settings</Text>
-          </Card.Section>
-          <Text m="sm">{settings.showDone ? 'Show' : 'Hide'} Completed ToDos</Text>
-          <Text m="sm">Items Per page:  {settings.taskPerPage}</Text>
-          <Text m="sm">Sort Keyword: {settings.sortBy}</Text>
-        </Card>
-
-      </Grid.Col>
-    </Grid>
+      <div className="updated-settings-card">
+        <h2 className="updated-settings-title">Updated Settings</h2>
+        <p className="setting-item">{settings.showDone ? 'Show' : 'Hide'} Completed ToDos</p>
+        <p className="setting-item">Items Per page: {settings.taskPerPage}</p>
+        <p className="setting-item">Sort Keyword: {settings.sortBy}</p>
+      </div>
+    </div>
   )
 }
