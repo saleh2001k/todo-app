@@ -9,11 +9,13 @@ function ListsSaver({ children }) {
         initialState,
         () => {
             const localData = localStorage.getItem('list');
+            console.log('Local Data:', localData); // Add this line for debugging
             return localData ? { list: JSON.parse(localData) } : initialState;
         }
     );
 
     const ManagedList = { data, dispatch };
+    console.log('ManagedList:', ManagedList); // Add this line for debugging
 
     return (
         <ListContext.Provider value={ManagedList}>
