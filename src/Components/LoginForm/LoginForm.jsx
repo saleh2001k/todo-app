@@ -7,7 +7,6 @@ export default function LoginForm() {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const { login, logout, loginData } = useContext(LoginContext)
-    console.log(username, password)
     function handleLoginSub(e) {
         e.preventDefault();
         login(username, password);

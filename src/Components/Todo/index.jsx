@@ -1,159 +1,108 @@
-import React, { useContext, useState, useEffect } from "react";
-import useForm from "../../hooks/form";
-import "./Todo.scss";
-import { v4 as uuid } from "uuid";
-import List from "../List/index";
-import { Button, Pagination } from "@mantine/core";
-import { useSettings } from "../../Context/Settings/index";
+import React, { useContext, useEffect, useState } from 'react';
+import useForm from '../../hooks/form';
+
+import { v4 as uuid } from 'uuid';
+import { Title, Grid, Flex, Button, TextInput, Text, Slider } from '@mantine/core';
+import List from '../List/';
+import { ListContext } from '../../Context/dataList/dataList';
 import LoginForm from '../LoginForm/LoginForm';
 import Auth from '../auth/Auth';
+import { LoginContext } from '../../Context/AuthContext/LoginContext';
+import './Todo.scss'
 
-const ToDo = () => {
-  const { settings, updateSettings } = useSettings();
-
-  const [currentPage, setCurrentPage] = useState(1);
+const Todo = () => {
 
   const [defaultValues] = useState({
     difficulty: 4,
   });
-
-
-  const [list, setList] = useState([]);
-
-  useEffect(() => {
-    const saveditems = JSON.parse(localStorage.getItem('items'));
-    if (saveditems) {
-      setList(saveditems.slice());
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('items', JSON.stringify(list));
-  }, [list]);
-
-
+  const { data, dispatch } = useContext(ListContext)
+  const { can } = useContext(LoginContext)
   const [incomplete, setIncomplete] = useState([]);
   const { handleChange, handleSubmit } = useForm(addItem, defaultValues);
 
   function addItem(item) {
     item.id = uuid();
     item.complete = false;
-    console.log(item);
-    setList([...list, item]);
+    dispatch({ type: 'changeList', payload: item });
   }
 
   function deleteItem(id) {
-    const items = list.filter((item) => item.id !== id);
-    setList(items);
+    const items = data.list.filter(item => item.id !== id);
+    dispatch({ type: 'replaceList', payload: items });
   }
 
   function toggleComplete(id) {
-    const items = list.map((item) => {
-      if (item.id == id) {
-        item.complete = !item.complete;
-      }
-      return item;
-    });
+    if (can('update')) {
 
-    setList(items);
+      const items = data.list.map(item => {
+        if (item.id === id) {
+          item.complete = !item.complete;
+        }
+        return item;
+      });
+
+      dispatch({ type: 'replaceList', payload: items })
+    }
+
   }
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-  };
 
   useEffect(() => {
-    let incompleteCount = list.filter((item) => !item.complete).length;
+    let incompleteCount = data.list.filter(item => !item.complete).length;
     setIncomplete(incompleteCount);
     document.title = `To Do List: ${incomplete}`;
-    console.log(incompleteCount)
+    localStorage.setItem('list', JSON.stringify(data.list))
+  }, [data.list]);
 
-  }, [list]);
   return (
-    <>
-      <section className="todo-body">
-        <LoginForm />
-
-        <Auth capability="read">
-          <header className="todo-header">
-            <h1>To Do List: {incomplete} items pending</h1>
-          </header>
-        </Auth>
-
-        <section className="todo-sections">
+    <Flex direction='column' justify='center' align={'center'} mih='80vh'>
+      <LoginForm />
+      <Auth capability="read">
+        <Title ta={'center'} c={'white'} bg={'#343a40'} w='80%' p={"20px"} m={'auto'} data-testid="todo-h1" order={1}>To Do List: {incomplete} items pending</Title>
+      </Auth>
+      <Grid mih={'80vh'} justify='center' w={'80%'} grow gutter={5} gutterXs="md" gutterMd="xl" gutterXl={50} >
+        <Grid.Col span={4}>
           <Auth capability="create">
-            <form onSubmit={handleSubmit} className="todo-form">
+            <form onSubmit={handleSubmit}>
+
               <h2>Add To Do Item</h2>
 
-              <label>
-                <span>To Do Item</span>
-                <br />
-                <input
-                  onChange={handleChange}
-                  name="text"
-                  type="text"
-                  placeholder="Item Details"
-                />
-              </label>
+              <TextInput
+                onChange={handleChange}
+                name="text"
+                placeholder="Task Details"
+                label="To Do Item"
+              />
 
-              <label>
-                <span>Assigned To</span>
-                <br />
-                <input
-                  onChange={handleChange}
-                  name="assignee"
-                  type="text"
-                  placeholder="Assignee Name"
-                />
-              </label>
+              <TextInput
+                onChange={handleChange}
+                name="assignee"
+                placeholder="For who?"
+                label="Assigned To"
+              />
 
-              <label>
-                <span>Difficulty</span>
-                <br />
-                <input
-                  onChange={handleChange}
-                  defaultValue={defaultValues.difficulty}
-                  type="range"
-                  min={1}
-                  max={5}
-                  name="difficulty"
-                />
-              </label>
-
-              <label>
-                <Button type="submit">Add Item</Button>
-              </label>
+              <Text>Difficulty</Text>
+              <Slider
+                color='indigo'
+                onChange={handleChange}
+                defaultValue={defaultValues.difficulty}
+                step={1}
+                min={1}
+                max={5}
+                name="difficulty"
+              />
+              <Button color='indigo' type="submit">Add Task</Button>
             </form>
           </Auth>
+        </Grid.Col>
+        <Grid.Col span={8}>
+          <Auth capability="read">
+            <List list={data.list} toggleComplete={toggleComplete} deleteItem={deleteItem} />
+          </Auth>
+        </Grid.Col>
+      </Grid>
 
-          <section className="todo-list">
-            <Auth capability="read">
-              {list.length ? (
-                <div className="todo-empty">
-                  <List
-                    items={list}
-                    currentPage={currentPage}
-                    deleteItem={deleteItem}
-                    toggleComplete={toggleComplete}
-                  />
-                </div>
-              ) : (
-                <div className="todo-empty">
-                  <p>Empty To Do List</p>
-                </div>
-              )}
-              <Pagination
-                total={
-                  list.length ? Math.ceil(list.length / settings.displayItems) : 1
-                }
-                value={currentPage}
-                onChange={handlePageChange}
-              />
-            </Auth>
-          </section>
-        </section>
-      </section>
-    </>
+    </Flex>
   );
 };
 
-export default ToDo;
+export default Todo;

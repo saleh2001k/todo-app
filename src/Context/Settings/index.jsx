@@ -1,34 +1,29 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { useEffect, useReducer } from 'react';
+import { stateReducer, initialState } from '../../hooks/Reducer/reducer';
 
-const SettingsContext = createContext();
+export const SettingContext = React.createContext();
 
-export function SettingsProvider({ children }) {
-  const defaultSettings = {
-    displayItems: 3,
-    hideCompleted: true,
-    sortField: 'difficulty',
-  };
-
-  const [settings, setSettings] = useState(() => {
-    const savedSettings = JSON.parse(localStorage.getItem('settings'));
-    return savedSettings ? savedSettings : defaultSettings;
-  });
+function Settings({ children }) {
+  const [settings, dispatch] = useReducer(
+    stateReducer,
+    initialState,
+    (initialData) => {
+      const localData = localStorage.getItem('settings');
+      return localData ? JSON.parse(localData) : initialData;
+    }
+  );
 
   useEffect(() => {
     localStorage.setItem('settings', JSON.stringify(settings));
   }, [settings]);
 
-  const updateSettings = (newSettings) => {
-    setSettings(newSettings);
-  };
+  const contextValue = { settings, dispatch };
 
   return (
-    <SettingsContext.Provider value={{ settings, updateSettings }}>
+    <SettingContext.Provider value={contextValue}>
       {children}
-    </SettingsContext.Provider>
+    </SettingContext.Provider>
   );
 }
 
-export function useSettings() {
-  return useContext(SettingsContext);
-}
+export default Settings;

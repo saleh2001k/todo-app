@@ -9,7 +9,6 @@ export default function Auth({ children, capability }) {
     const isLoggedIn = loginData.loggedIn;
     const canDo = capability ? can(capability) : true;
     const okToRender = isLoggedIn && canDo;
-    console.log(canDo, isLoggedIn)
     return (
         <When condition={okToRender}>
             {children}

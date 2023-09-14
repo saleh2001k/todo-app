@@ -36,11 +36,8 @@ function LoginProvider(props) {
     }
 
     async function login(username, password) {
-        console.log('running')
         let { loggedIn, token, user } = loginData;
         let auth = testUsers[username];
-        console.log(auth)
-
         if (auth && auth.password === password) {
             try {
                 validateToken(auth.token);
@@ -58,13 +55,10 @@ function LoginProvider(props) {
     function validateToken(token) {
         try {
             let validUser = jwt_decode(token);
-            console.log(validUser)
             setLoginState(true, token, validUser);
-            console.log('login-State', loginData.loggedIn)
         }
         catch (e) {
             setLoginState(false, null, {}, e);
-            console.log('Token Validation Error', e);
         }
 
     };
