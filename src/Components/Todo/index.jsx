@@ -23,7 +23,7 @@ const Todo = () => {
   async function addItem(item) {
     try {
       item.completed = false;
-      const res = await axios.post(`https://sample-back-end.onrender.com/todo`, item)
+      const res = await axios.post(`https://auth-api-fz5h.onrender.com/todo/`, item)
       dispatch({ type: 'changeList', payload: item });
     } catch (err) {
       console.log('post', err);
@@ -33,7 +33,7 @@ const Todo = () => {
 
   async function deleteItem(id) {
     try {
-      await axios.delete(`https://sample-back-end.onrender.com/todo/${id}`)
+      await axios.delete(`https://auth-api-fz5h.onrender.com/todo/${id}`)
       const items = data.list.filter(item => item.id !== id);
       dispatch({ type: 'replaceList', payload: items });
     } catch (err) {
@@ -49,7 +49,7 @@ const Todo = () => {
           item.completed = !item.completed;
           try {
             item.id = id
-            const res = await axios.put(`https://sample-back-end.onrender.com/todo/${id}`, item)
+            const res = await axios.put(`https://auth-api-fz5h.onrender.com/todo/${id}`, item)
           } catch (err) {
             console.log(err);
           }
@@ -62,7 +62,7 @@ const Todo = () => {
   }
   async function getData() {
     try {
-      const res = await axios.get('https://sample-back-end.onrender.com/todo')
+      const res = await axios.get('https://auth-api-fz5h.onrender.com/todo')
       dispatch({ type: 'replaceList', payload: res.data.data })
     } catch (err) {
       console.log(err);
@@ -75,7 +75,7 @@ const Todo = () => {
   useEffect(() => {
     let incompleteCount = data.list.filter(item => !item.complete).length;
     setIncomplete(incompleteCount);
-    document.title = `To Do List: ${incomplete}`;
+    document.title = `ToDo List: ${incomplete}`;
   }, [data.list]);
 
   return (
