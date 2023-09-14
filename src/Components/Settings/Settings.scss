@@ -1,57 +1,102 @@
+/* Settings.scss */
 
+.settings-container {
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+  margin: auto;
+  min-height: 80vh;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+}
 
-// SettingsPage.scss
+.settings-card {
+  flex: 1;
+  padding: 32px;
+  background-color: #ffffff;
+  border-radius: 8px;
+}
 
-.settings-page {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 70vh;
-    background-color: #f0f0f0; 
-  
-    .grid-container {
-      display: flex;
-      justify-content: space-between;
-      width: 800px; // Adjust the width as needed
-    }
-  
-    .settings-card {
-      width: 100%;
-      padding: 20px;
-      margin-right: 20px; // Spacing between cards
-      background-color: #fff; // Background color for the settings card
-      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); // Shadow for the card
-    }
-  
-    .saved-data-card {
-      width: 100%;
-      padding: 20px;
-      background-color: #fff; // Background color for the saved data card
-      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); // Shadow for the card
-    }
-  
-    .settings-heading {
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-  
-    .settings-item {
-      margin-bottom: 15px;
-    }
-  
-    .settings-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-  
-    .saved-data-heading {
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-  
-    .saved-data-item {
-      margin-bottom: 10px;
-    }
-  }
-  
+.settings-title {
+  font-size: 28px;
+  margin-bottom: 24px;
+  color: #333333;
+}
+
+.settings-label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  font-size: 18px;
+  color: #333333;
+}
+
+.settings-label input {
+  margin-left: 16px;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+}
+
+.settings-label input:checked {
+  background-color: #007bff;
+  border: 1px solid #007bff;
+}
+
+.settings-label input:checked::after {
+  content: '\2714'; /* Checkmark icon */
+  font-size: 18px;
+  color: #ffffff;
+  position: relative;
+  top: -2px;
+  left: -1px;
+}
+
+.settings-input {
+  margin-bottom: 24px;
+  font-size: 18px;
+}
+
+.settings-input label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333333;
+}
+
+.settings-input input {
+  width: 100%;
+  padding: 12px;
+  background-color: #f5f5f5;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  font-size: 16px;
+  color: #333333;
+  outline: none;
+}
+
+.updated-settings-card {
+  flex: 1;
+  padding: 32px;
+  background-color: #ffffff;
+  border-radius: 8px;
+}
+
+.updated-settings-title {
+  font-size: 24px;
+  margin-bottom: 24px;
+  color: #333333;
+}
+
+.setting-item {
+  margin-bottom: 16px;
+  font-size: 18px;
+  color: #333333;
+}

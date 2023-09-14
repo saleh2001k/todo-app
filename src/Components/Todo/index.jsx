@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
 import useForm from '../../hooks/form';
-
 import { v4 as uuid } from 'uuid';
 import { Title, Grid, Flex, Button, TextInput, Text, Slider } from '@mantine/core';
 import List from '../List/';
@@ -9,9 +8,10 @@ import LoginForm from '../LoginForm/LoginForm';
 import Auth from '../auth/Auth';
 import { LoginContext } from '../../Context/AuthContext/LoginContext';
 import './Todo.scss'
+import SignUp from '../SignupForm.jsx';
+import axios from 'axios';
 
 const Todo = () => {
-
   const [defaultValues] = useState({
     difficulty: 4,
   });
@@ -20,42 +20,68 @@ const Todo = () => {
   const [incomplete, setIncomplete] = useState([]);
   const { handleChange, handleSubmit } = useForm(addItem, defaultValues);
 
-  function addItem(item) {
-    item.id = uuid();
-    item.complete = false;
-    dispatch({ type: 'changeList', payload: item });
+  async function addItem(item) {
+    try {
+      item.completed = false;
+      const res = await axios.post(`https://sample-back-end.onrender.com/todo`, item)
+      dispatch({ type: 'changeList', payload: item });
+    } catch (err) {
+      console.log('post', err);
+    }
+    console.log(item);
   }
 
-  function deleteItem(id) {
-    const items = data.list.filter(item => item.id !== id);
-    dispatch({ type: 'replaceList', payload: items });
+  async function deleteItem(id) {
+    try {
+      await axios.delete(`https://sample-back-end.onrender.com/todo/${id}`)
+      const items = data.list.filter(item => item.id !== id);
+      dispatch({ type: 'replaceList', payload: items });
+    } catch (err) {
+      console.log(err);
+    }
   }
 
-  function toggleComplete(id) {
+  async function toggleComplete(id) {
     if (can('update')) {
 
-      const items = data.list.map(item => {
+      const items = await Promise.all(data.list.map(async (item) => {
         if (item.id === id) {
-          item.complete = !item.complete;
+          item.completed = !item.completed;
+          try {
+            item.id = id
+            const res = await axios.put(`https://sample-back-end.onrender.com/todo/${id}`, item)
+          } catch (err) {
+            console.log(err);
+          }
         }
         return item;
-      });
-
+      }));
       dispatch({ type: 'replaceList', payload: items })
     }
 
   }
+  async function getData() {
+    try {
+      const res = await axios.get('https://sample-back-end.onrender.com/todo')
+      dispatch({ type: 'replaceList', payload: res.data.data })
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
+  useEffect(() => {
+    getData()
+  }, []);
   useEffect(() => {
     let incompleteCount = data.list.filter(item => !item.complete).length;
     setIncomplete(incompleteCount);
     document.title = `To Do List: ${incomplete}`;
-    localStorage.setItem('list', JSON.stringify(data.list))
   }, [data.list]);
 
   return (
     <Flex direction='column' justify='center' align={'center'} mih='80vh'>
       <LoginForm />
+      <SignUp />
       <Auth capability="read">
         <Title ta={'center'} c={'white'} bg={'#343a40'} w='80%' p={"20px"} m={'auto'} data-testid="todo-h1" order={1}>To Do List: {incomplete} items pending</Title>
       </Auth>
