@@ -1,62 +1,72 @@
-import React from "react";
-import "./List.scss";
-import { useSettings } from "../../Context/Settings/index";
-import { Paper, Text, Group, CloseButton, Checkbox } from "@mantine/core";
+import React, { useContext, useState } from 'react';
+import {
+  Card,
+  Text,
+  Badge,
+  Button,
+  Flex,
+  Pagination,
+} from '@mantine/core';
+import { SettingContext } from '../../Context/Settings/index';
 import Auth from '../auth/Auth';
+import './List.scss';
 
+export default function List({ list, toggleComplete, deleteItem }) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const { settings } = useContext(SettingContext);
 
-function List({ items, currentPage, deleteItem, toggleComplete }) {
-  const { settings } = useSettings();
+  const tasksToDisplay = list
+    .filter((task) => settings.showDone || !task.complete)
+    .slice(
+      (currentPage - 1) * settings.taskPerPage,
+      currentPage * settings.taskPerPage
+    );
 
-  const filteredItems = settings.hideCompleted
-    ? items.filter((item) => !item.complete)
-    : items;
-
-  const sortedItems = filteredItems.sort(
-    (a, b) => b[settings.sortField] - a[settings.sortField]
+  const totalPages = Math.ceil(
+    tasksToDisplay.length / settings.taskPerPage
   );
-
-  const startIndex = (currentPage - 1) * settings.displayItems;
-  const endIndex = startIndex + settings.displayItems;
-  const itemsToDisplay = sortedItems.slice(startIndex, endIndex);
 
   return (
     <div>
-      {itemsToDisplay.map((item) => (
-        <section className="list-item" key={item.id}>
-          <Paper withBorder p="lg" radius="md" shadow="md">
-            <Group position="apart" mb="xs">
-              <Text fz="lg" fw={500}>
-                <span className="pending">Pending</span>
-                {item?.assignee?.toUpperCase()}
-              </Text>
-              <Auth capability="delete">
-                <CloseButton
-                  mr={-9}
-                  mt={-9}
-                  onClick={() => deleteItem(item.id)}
-                />
-              </Auth>
-            </Group>
-            <Text c="dimmed" fz="s">
-              {item.text}
-            </Text>
-            <Group position="apart" mt="lg">
-              <Text color="blue" size="xs">
-                Difficulty: {item.difficulty}
-              </Text>
-              <Checkbox
-                label="completed"
-                color="teal"
-                checked={item.complete}
-                onChange={() => toggleComplete(item.id)}
-              />
-            </Group>
-          </Paper>
-        </section>
-      ))}
-    </div>
-  );
-}
+    {tasksToDisplay.map((item) => (
+      <Card
+        data-testid='task-card'
+        className='task-card'
+        key={item.id}
+      >
+        <Card.Section className='task-card-section'> 
+          <Flex justify='space-between'>
+            <Text>Task: {item.text}</Text>
+            <Text>Assigned to: {item.assignee}</Text>
+            <Text>Difficulty: {item.difficulty}</Text>
+            <Badge
+              data-testid='btn-done'
+              className='btn-done' 
+              color={item.complete ? 'green' : 'pink'}
+              variant='light'
+              onClick={() => toggleComplete(item.id)}
+            >
+              {item.complete ? 'Done' : 'ToDo'}
+            </Badge>
+            <Auth capability='delete'>
+              <Button
+                onClick={() => deleteItem(item.id)}
+                className='delete-button' 
+              >
+                Delete
+              </Button>
+            </Auth>
+          </Flex>
+        </Card.Section>
+      </Card>
+    ))}
 
-export default List;
+    <Pagination
+      onChange={setCurrentPage}
+      m='20px'
+      color='indigo'
+      total={totalPages}
+    />
+  </div>
+);
+}

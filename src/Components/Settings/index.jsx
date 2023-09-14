@@ -1,101 +1,57 @@
-import React, { useState } from 'react';
-import {
-  Switch,
-  Button,
-  Grid,
-  Col,
-  TextInput,
-  Paper,
-  Text,
-  Group,
-  Badge,
-  Checkbox,
-  Divider,
-} from '@mantine/core';
-import { useSettings } from '../../Context/Settings/index';
-import './Settings.scss';
+import React, { useContext } from 'react'
+import { SettingContext } from '../../Context/Settings/index'
+import { Card, Grid, NumberInput, Switch, Text, TextInput } from '@mantine/core'
+import './Settings.scss'
 
-function SettingsPage() {
-  const { settings, updateSettings } = useSettings();
 
-  const [displayItems, setDisplayItems] = useState(settings.displayItems);
-  const [hideCompleted, setHideCompleted] = useState(settings.hideCompleted);
-  const [savedData, setSavedData] = useState({}); // State to hold saved data
 
-  const handleSaveSettings = () => {
-    const newSettings = {
-      ...settings,
-      displayItems,
-      hideCompleted,
-    };
-    updateSettings(newSettings);
+export default function SettingPage() {
 
-    // Update the saved data when settings are saved
-    setSavedData(newSettings);
-  };
-
+  const { settings, dispatch } = useContext(SettingContext)
   return (
-    <div className="settings-page">
-      <Grid gutter="lg">
-        <Col span={6}>
-          <Paper padding="lg" shadow="xs" className="settings-card">
-            <h2 className="settings-heading">Application Settings</h2>
-            <Divider margin="xs" />
+    <Grid style={{ width: '80%', margin: 'auto', minHeight: '80vh' }}>
+      <Grid.Col xs={12} sm={8}>
+        <Card withBorder p="xs">
+          <Text >Change Settings</Text>
 
-            <div className="settings-item">
-              <Switch
-                labelPosition="left"
-                label={<span>Hide Completed Items:</span>}
-                size="md"
-                checked={hideCompleted}
-                onChange={() => setHideCompleted(!hideCompleted)}
-              />
-            </div>
-            <div className="settings-item">
-              <TextInput
-                label="Display Items"
-                type="number"
-                value={displayItems}
-                onChange={(e) => setDisplayItems(Number(e.target.value))}
-              />
-            </div>
-            <div className="settings-item">
-              <TextInput
-                label="Sort Keyword"
-                name="Keyword"
-                type="text"
-                placeholder="difficulty"
-              />
-            </div>
+          <Switch
+            onChange={(e) => dispatch({ type: 'changeShow', payload: e.currentTarget.checked })}
+            checked={settings.showDone}
+            label="Show Completed ToDos"
+            mb="sm"
+            data-testid="show-completed-switch"
+          />
 
-            <Divider margin="xs" />
-            <div className="settings-footer">
-              <Button
-                type="submit"
-                fullWidth
-                radius="lg"
-                size="lg"
-                onClick={handleSaveSettings}
-              >
-                Save Settings
-              </Button>
-            </div>
-          </Paper>
-        </Col>
-        <Col span={6}>
-          <Paper padding="lg" shadow="xs" className="saved-data-card">
-            <h2 className="settings-heading">Saved Data</h2>
-            <Divider margin="xs" />
+          <NumberInput
+            mb="sm"
+            onChange={(value) => dispatch({ type: 'changeTasksNum', payload: value })}
+            placeholder={settings.taskPerPage}
+            label="Items Per page"
+            data-testid="items-per-page-input"
+          />
 
-            <Text>
-              Display Items: {savedData.displayItems || settings.displayItems}
-            </Text>
-            <Text>Hide Completed Items: {savedData.hideCompleted ? 'Yes' : 'No'}</Text>
-          </Paper>
-        </Col>
-      </Grid>
-    </div>
-  );
+          <TextInput
+            mb="sm"
+            onChange={(e) => dispatch({ type: 'changeSort', payload: e.target.value })}
+            placeholder={settings.sortBy}
+            label="Sort Keyword"
+            data-testid="sort-keyword-input"
+          />
+
+        </Card>
+      </Grid.Col>
+      <Grid.Col xs={12} sm={4}>
+
+        <Card withBorder p="xs">
+          <Card.Section>
+            <Text m="xl" >Updated Settings</Text>
+          </Card.Section>
+          <Text m="sm">{settings.showDone ? 'Show' : 'Hide'} Completed ToDos</Text>
+          <Text m="sm">Items Per page:  {settings.taskPerPage}</Text>
+          <Text m="sm">Sort Keyword: {settings.sortBy}</Text>
+        </Card>
+
+      </Grid.Col>
+    </Grid>
+  )
 }
-
-export default SettingsPage;
